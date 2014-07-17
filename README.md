@@ -30,7 +30,6 @@ for df in dr.definition_list:
 - .word - word that is being defined.  
 - .definition_list - definition items.  
 - .get_definitions() - fills in object.definition_list with Definition objects.  
-args: file_name - name of an mp3 file  
 - .save_to_mp3() - saves pronounciation to mp3 file:  
 args: file_name - name of a mp3 file  
 - .get_html() - returns html of the word definition page as a string.  
