@@ -25,9 +25,9 @@ for df in dr.definition_list:
 2. object.save_to_mp3(filen_ame="desired_file_name".mp3) saves mp3 file.   
 3. object.get_definitions() retrieves all via definitions and stores them in the object.definition_list as Definition objects:  
 **Definition:**  
-* .word - word that is being defined
-* .type - word type (noun etc.)
-* .definition - definition of a word
+- object.word - word that is being defined  
+- object.type - word type (noun etc.)  
+- object.definition - definition of a word  
 
 ## Run example:
 ```python
