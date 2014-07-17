@@ -1,3 +1,5 @@
+import re
+
 __author__ = 'Bernard @ bernardas.alisauskas@gmail.com'
 import requests
 import bs4
@@ -12,6 +14,7 @@ class DictionaryReference:
     def __init__(self, word):
         self.word = word
         self.definition_list = []
+        self.extra_list = []
         self.__request = None
         self.__soup = None
         self.__get_page_contents()
@@ -24,19 +27,33 @@ class DictionaryReference:
     def get_definitions(self):
         """Finds definitions in the page soup and appends them to self.definition_list"""
         tables = self.__soup.find_all('div', class_="KonaBody")
-        # tables_extra = tables[-4:] #TODO find use for tables_extra
-        tables = tables[:]
         for table in tables:
             if table['style'] == '':
+                # print(table)
+                # key = table.find('div', class_='dicTl').text
+                # item = table.find('language').text
+                # print(key)
+                # print(item)
                 continue
             text = table.find('div', class_='pbk').text
             text = text.split(' ')
-            word_type = text[1]
+            word_type = text[1].replace(',', '')
             text = " ".join(text[2:]).strip()
-            self.definition_list.append(Definition(self.word, word_type, text))
-        with open(self.word + '.html', 'w') as html_file:
+            origin = re.sub("Origin:|\s+", " ", table.find('div', class_="ety").text).strip()
+
+            self.definition_list.append(Definition(self.word, word_type, text, origin))
+
+    def save_html(self, file_name=None):
+        """Saves the html of a definition"""
+        if file_name is None:
+            file_name = '{word}.html'.format(word=self.word)
+        with open(file_name, 'w') as html_file:
             print("Writing to {0}.html".format(self.word))
             html_file.write(self.__soup.prettify())
+
+    def get_html(self):
+        """Returns string html of a definition"""
+        return self.__soup.prettify()
 
     def save_to_mp3(self, file_name=None):
         """Saves mp3 pronunciation sound file
@@ -57,23 +74,32 @@ class DictionaryReference:
 
 
 class Definition:
-    """Definition object, contains definition list, main definition and a type of a word that is being defined"""
-    def __init__(self, word, word_type, definitions,):
+    """Definition object, contains :
+    word - word that is being defned
+    type - word type (i.e. noun)
+    definition - word definition
+    origin - word origin
+    of a word that is being defined"""
+    def __init__(self, word, word_type, definition, origin):
         self.word = word
         self.type = word_type
-        self.definition = definitions
+        self.definition = definition
+        self.origin = origin
 
     def __str__(self):
-        return "Word: {0}\nType: {1}\nDefinition: {2}".format(self.word, self.type, self.definition)
+        return "Word: {0}\nType: {1}\nDefinition: {2}\nOrigin: {3}".format(self.word, self.type, self.definition,
+                                                                                self.origin)
 
 
 def main():
     """Example api process"""
     dr = DictionaryReference(input("Enter a word:"))
     dr.save_to_mp3()
+    dr.save_html()
     dr.get_definitions()
     for df in dr.definition_list:
         print(df)
+    print('html:\n{}'.format(dr.get_html()))
 
 if __name__ == '__main__':
     main()
