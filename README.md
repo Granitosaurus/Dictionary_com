@@ -4,6 +4,7 @@ Dictionary_com
 Python API/Scraper for Dictionary.com
 
 #Prerequisites:
+Written in Python 3.4
 **BeautifulSoup 4** - https://pypi.python.org/pypi/beautifulsoup4/  
 >pip install beautifulsoup4  
 
